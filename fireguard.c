@@ -1,5 +1,3 @@
-
-
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/init.h>
@@ -81,7 +79,7 @@ static int __init firewall_init(void) {
   in_hook.priority = NF_IP_PRI_FIRST;//higher priority first
 
   hook = nf_register_hook(&in_hook);
-  this_proc = proc_create("BrickWall", 0666, NULL , &fops);//0666->read and write
+  this_proc = proc_create("fireguard", 0666, NULL , &fops);//0666->read and write
 
 
   if(this_proc != NULL || hook == 0){
@@ -132,7 +130,7 @@ unsigned int hookInFunction(void *priv, struct sk_buff *skb, const struct nf_hoo
 //called when module exits
 static void __exit firewall_exit(void) {
   nf_unregister_hook(&in_hook);
-  remove_proc_entry("BrickWall", NULL);
+  remove_proc_entry("fireguard", NULL);
 
   printk(KERN_INFO "Firewall module closed\n");
 }
@@ -144,7 +142,7 @@ static void __exit firewall_exit(void) {
 
 static int firewall_open(struct inode *inode, struct file *file) {
 
-  printk(KERN_INFO "BrickWall is open!\n");
+  printk(KERN_INFO "fireguard is open!\n");
   return 0;
 
 }
@@ -294,8 +292,6 @@ static int checkPermission(uid_t user){
   }
   return 1;//if user is not allo
 }
-
-
 
 module_init(firewall_init);
 module_exit(firewall_exit);
